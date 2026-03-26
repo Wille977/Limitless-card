@@ -1,0 +1,18 @@
+<svg viewBox="0 0 1000 1000" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1000" height="1000" rx="110" fill="#000"/>
+  <!-- Center of starburst: (475, 515) -->
+  <!-- Vertical bar: tall up, shorter down -->
+  <line x1="475" y1="148" x2="475" y2="808" stroke="white" stroke-width="48" stroke-linecap="square"/>
+  <!-- Long horizontal bar: far left, moderate right -->
+  <line x1="52"  y1="515" x2="930" y2="515" stroke="white" stroke-width="48" stroke-linecap="square"/>
+  <!-- Upper-left diagonal (~135° from right) -->
+  <line x1="475" y1="515" x2="195" y2="305" stroke="white" stroke-width="44" stroke-linecap="square"/>
+  <!-- Upper-right steep (~60° above horizontal) -->
+  <line x1="475" y1="515" x2="660" y2="275" stroke="white" stroke-width="44" stroke-linecap="square"/>
+  <!-- Upper-right moderate (~35° above horizontal) -->
+  <line x1="475" y1="515" x2="725" y2="375" stroke="white" stroke-width="44" stroke-linecap="square"/>
+  <!-- Lower-right shallow (~12° below horizontal) -->
+  <line x1="475" y1="515" x2="915" y2="608" stroke="white" stroke-width="44" stroke-linecap="square"/>
+  <!-- Lower-right steeper (~42° below horizontal) -->
+  <line x1="475" y1="515" x2="710" y2="700" stroke="white" stroke-width="44" stroke-linecap="square"/>
+</svg>
