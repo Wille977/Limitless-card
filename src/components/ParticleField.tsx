@@ -30,13 +30,13 @@ export function ParticleField({ intensity = 0.3 }: { intensity?: number }) {
     let rafId: number;
 
     function resize() {
-      if (!canvas) return;
+      if (!canvas || !ctx) return;
       const dpr = window.devicePixelRatio || 1;
       canvas.width = window.innerWidth * dpr;
       canvas.height = window.innerHeight * dpr;
       canvas.style.width = `${window.innerWidth}px`;
       canvas.style.height = `${window.innerHeight}px`;
-      ctx?.scale(dpr, dpr);
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
       init();
     }
 
@@ -44,14 +44,14 @@ export function ParticleField({ intensity = 0.3 }: { intensity?: number }) {
       if (!canvas) return;
       const logicalW = window.innerWidth;
       const logicalH = window.innerHeight;
-      const count = Math.min(600, Math.floor((logicalW * logicalH) / 14000));
+      const count = Math.min(80, Math.floor((logicalW * logicalH) / 25000));
       particles = Array.from({ length: count }, () => ({
         x: Math.random() * logicalW,
         y: Math.random() * logicalH,
-        vx: (Math.random() - 0.5) * 0.25,
-        vy: -Math.random() * 0.15 - 0.03,
-        size: Math.random() * 2 + 0.4,
-        baseOpacity: Math.random() * 0.035 + 0.008,
+        vx: (Math.random() - 0.5) * 0.15,
+        vy: -Math.random() * 0.12 - 0.02,
+        size: Math.random() * 1.2 + 0.3,
+        baseOpacity: Math.random() * 0.025 + 0.005,
         opacity: 0,
       }));
     }
