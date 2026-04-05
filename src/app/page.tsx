@@ -270,18 +270,21 @@ export default function Home() {
 
       {/* Main content */}
       <main
-        className={`relative z-10 flex-1 flex flex-col items-center justify-center px-6 sm:px-10 py-10 ${
+        className={`relative z-10 flex-1 flex flex-col items-center px-6 sm:px-10 ${
           shaking ? "screen-shake" : ""
         }`}
       >
-        {/* ── Title (landing only) ── */}
+        {/* Spacer pushes card to visual center — card never moves */}
+        <div className="flex-1" />
+
+        {/* ── Title (landing only) — absolutely positioned above card ── */}
         <AnimatePresence>
           {stage === "landing" && (
             <motion.h1
               key="title"
               initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -10 }}
+              exit={{ opacity: 0, y: -6 }}
               transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
               className="text-4xl sm:text-5xl font-bold leading-[1.1] mb-8 text-center"
               style={{ color: "#E4E4E7", letterSpacing: "-0.025em" }}
@@ -291,7 +294,7 @@ export default function Home() {
           )}
         </AnimatePresence>
 
-        {/* ── Card scene (persists across landing → loading → reveal → result) ── */}
+        {/* ── Card scene — the fixed anchor point ── */}
         {showCard && (
           <CardScene
             flipped={isFlipped}
@@ -316,8 +319,8 @@ export default function Home() {
               key="landing"
               initial={{ opacity: 0, y: 14 }}
               animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -10 }}
-              transition={{ duration: 0.35, ease: [0.4, 0, 0.2, 1] }}
+              exit={{ opacity: 0, y: -6 }}
+              transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
               className="mt-8 w-full flex flex-col items-center"
             >
               <WalletInput onSubmit={handleSubmit} loading={false} />
@@ -497,6 +500,9 @@ export default function Home() {
             </motion.div>
           )}
         </AnimatePresence>
+
+        {/* Bottom spacer — mirrors top spacer to keep card vertically centered */}
+        <div className="flex-1" />
       </main>
 
       {/* Hidden off-screen card for html2canvas screenshot */}
