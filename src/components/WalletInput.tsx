@@ -73,7 +73,7 @@ export function WalletInput({ onSubmit, loading }: WalletInputProps) {
 
       <button
         type="submit"
-        disabled={loading || !wallet}
+        disabled={loading || !isValid}
         className="w-full py-[17px] text-[13px] font-bold tracking-[0.08em] uppercase transition-all duration-150 disabled:opacity-25 disabled:cursor-not-allowed active:scale-[0.98] hover:opacity-90"
         style={{
           background: "#DCF58C",

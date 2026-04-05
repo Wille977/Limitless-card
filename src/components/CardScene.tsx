@@ -28,23 +28,23 @@ export function CardScene({
   const [tilt, setTilt] = useState({ x: 0, y: 0 });
   const [glare, setGlare] = useState({ x: 50, y: 50 });
 
-  /* ── Mouse tracking for tilt + holo ─────────────────────────────────────── */
+  /* ── Pointer tracking for tilt + holo (mouse + touch) ───────────────────── */
 
-  const handleMouseMove = useCallback(
-    (e: MouseEvent) => {
+  const updateTilt = useCallback(
+    (clientX: number, clientY: number) => {
       if (!interactive) return;
       const el = containerRef.current;
       if (!el) return;
       const rect = el.getBoundingClientRect();
-      const x = (e.clientX - rect.left) / rect.width;
-      const y = (e.clientY - rect.top) / rect.height;
+      const x = (clientX - rect.left) / rect.width;
+      const y = (clientY - rect.top) / rect.height;
       setTilt({ x: (0.5 - y) * 15, y: (x - 0.5) * 15 });
       setGlare({ x: x * 100, y: y * 100 });
     },
     [interactive]
   );
 
-  const handleMouseLeave = useCallback(() => {
+  const resetTilt = useCallback(() => {
     setTilt({ x: 0, y: 0 });
     setGlare({ x: 50, y: 50 });
   }, []);
@@ -52,13 +52,24 @@ export function CardScene({
   useEffect(() => {
     const el = containerRef.current;
     if (!el) return;
-    el.addEventListener("mousemove", handleMouseMove);
-    el.addEventListener("mouseleave", handleMouseLeave);
-    return () => {
-      el.removeEventListener("mousemove", handleMouseMove);
-      el.removeEventListener("mouseleave", handleMouseLeave);
+
+    const onMouseMove = (e: MouseEvent) => updateTilt(e.clientX, e.clientY);
+    const onTouchMove = (e: TouchEvent) => {
+      if (e.touches[0]) updateTilt(e.touches[0].clientX, e.touches[0].clientY);
     };
-  }, [handleMouseMove, handleMouseLeave]);
+
+    el.addEventListener("mousemove", onMouseMove);
+    el.addEventListener("mouseleave", resetTilt);
+    el.addEventListener("touchmove", onTouchMove, { passive: true });
+    el.addEventListener("touchend", resetTilt);
+
+    return () => {
+      el.removeEventListener("mousemove", onMouseMove);
+      el.removeEventListener("mouseleave", resetTilt);
+      el.removeEventListener("touchmove", onTouchMove);
+      el.removeEventListener("touchend", resetTilt);
+    };
+  }, [updateTilt, resetTilt]);
 
   /* ── Render ─────────────────────────────────────────────────────────────── */
 
@@ -74,7 +85,7 @@ export function CardScene({
       style={{ perspective: "1200px" }}
     >
       <div ref={containerRef} className="relative">
-        {/* Layer 1 — tilt (mouse-driven in result stage) */}
+        {/* Layer 1 — tilt (pointer-driven in result stage) */}
         <motion.div
           animate={{
             rotateX: interactive ? tilt.x : 0,

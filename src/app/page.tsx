@@ -49,16 +49,27 @@ export default function Home() {
     useRef<Promise<{ cardData: TraderCardData; motivation: string }> | null>(
       null
     );
+  const abortRef = useRef<AbortController | null>(null);
   const revealTimeouts = useRef<ReturnType<typeof setTimeout>[]>([]);
+  const stepTimeouts = useRef<ReturnType<typeof setTimeout>[]>([]);
 
-  // Cleanup reveal timeouts on unmount
+  // Cleanup on unmount
   useEffect(() => {
-    return () => revealTimeouts.current.forEach(clearTimeout);
+    return () => {
+      revealTimeouts.current.forEach(clearTimeout);
+      stepTimeouts.current.forEach(clearTimeout);
+      abortRef.current?.abort();
+    };
   }, []);
 
   /* ── Handlers ───────────────────────────────────────────────────────────── */
 
   function handleSubmit(addr: string) {
+    // Abort any in-flight request from a previous submit
+    abortRef.current?.abort();
+    const controller = new AbortController();
+    abortRef.current = controller;
+
     setWallet(addr);
     setError("");
     setStepIndex(0);
@@ -67,7 +78,8 @@ export default function Home() {
     setCopyState("idle");
 
     apiPromiseRef.current = fetch(
-      `/api/generate?wallet=${encodeURIComponent(addr)}`
+      `/api/generate?wallet=${encodeURIComponent(addr)}`,
+      { signal: controller.signal }
     ).then(async (res) => {
       const json = await res.json();
       if (!res.ok) throw new Error(json.error ?? "Failed to generate card");
@@ -77,27 +89,31 @@ export default function Home() {
     setStage("loading");
   }
 
-  function triggerReveal(data: {
-    cardData: TraderCardData;
-    motivation: string;
-  }) {
-    setCardData(data.cardData);
-    setMotivation(data.motivation);
-    setStage("revealing");
-    setIsSpinning(false);
-    setShowFlash(true);
+  const triggerReveal = useCallback(
+    (data: { cardData: TraderCardData; motivation: string }) => {
+      setCardData(data.cardData);
+      setMotivation(data.motivation);
+      setStage("revealing");
+      setIsSpinning(false);
+      setShowFlash(true);
 
-    revealTimeouts.current = [
-      setTimeout(() => setShowFlash(false), 600),
-      setTimeout(() => setIsFlipped(true), 100),
-      setTimeout(() => setShaking(true), 200),
-      setTimeout(() => setShaking(false), 500),
-      setTimeout(() => setStage("result"), 1100),
-    ];
-  }
+      // Clear any previous reveal timeouts before scheduling new ones
+      revealTimeouts.current.forEach(clearTimeout);
+      revealTimeouts.current = [
+        setTimeout(() => setShowFlash(false), 600),
+        setTimeout(() => setIsFlipped(true), 100),
+        setTimeout(() => setShaking(true), 200),
+        setTimeout(() => setShaking(false), 500),
+        setTimeout(() => setStage("result"), 1100),
+      ];
+    },
+    []
+  );
 
   function handleReset() {
+    abortRef.current?.abort();
     revealTimeouts.current.forEach(clearTimeout);
+    stepTimeouts.current.forEach(clearTimeout);
     setStage("landing");
     setWallet("");
     setCardData(null);
@@ -117,6 +133,7 @@ export default function Home() {
 
     let cancelled = false;
     let current = 0;
+    stepTimeouts.current = [];
 
     const advance = () => {
       if (cancelled) return;
@@ -127,12 +144,13 @@ export default function Home() {
         return;
       }
 
-      setTimeout(() => {
+      const id = setTimeout(() => {
         if (!cancelled) {
           current++;
           advance();
         }
       }, STEP_DURATIONS[current] ?? 700);
+      stepTimeouts.current.push(id);
     };
 
     async function resolveApi() {
@@ -143,6 +161,8 @@ export default function Home() {
         triggerReveal(result);
       } catch (e: unknown) {
         if (cancelled) return;
+        // Don't show abort errors as user-facing errors
+        if (e instanceof DOMException && e.name === "AbortError") return;
         setIsSpinning(false);
         setError(e instanceof Error ? e.message : "Something went wrong");
         setStage("error");
@@ -154,8 +174,9 @@ export default function Home() {
     advance();
     return () => {
       cancelled = true;
+      stepTimeouts.current.forEach(clearTimeout);
     };
-  }, [stage]);
+  }, [stage, triggerReveal]);
 
   /* ── Copy / Share ───────────────────────────────────────────────────────── */
 
@@ -186,7 +207,8 @@ export default function Home() {
           a.href = url;
           a.download = "limitless-trader-card.png";
           a.click();
-          URL.revokeObjectURL(url);
+          // Delay revoke to ensure browser reads the blob
+          setTimeout(() => URL.revokeObjectURL(url), 1000);
           setCopyState("idle");
         }
       }, "image/png");

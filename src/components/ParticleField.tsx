@@ -31,17 +31,23 @@ export function ParticleField({ intensity = 0.3 }: { intensity?: number }) {
 
     function resize() {
       if (!canvas) return;
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
+      const dpr = window.devicePixelRatio || 1;
+      canvas.width = window.innerWidth * dpr;
+      canvas.height = window.innerHeight * dpr;
+      canvas.style.width = `${window.innerWidth}px`;
+      canvas.style.height = `${window.innerHeight}px`;
+      ctx?.scale(dpr, dpr);
       init();
     }
 
     function init() {
       if (!canvas) return;
-      const count = Math.floor((canvas.width * canvas.height) / 14000);
+      const logicalW = window.innerWidth;
+      const logicalH = window.innerHeight;
+      const count = Math.min(600, Math.floor((logicalW * logicalH) / 14000));
       particles = Array.from({ length: count }, () => ({
-        x: Math.random() * canvas.width,
-        y: Math.random() * canvas.height,
+        x: Math.random() * logicalW,
+        y: Math.random() * logicalH,
         vx: (Math.random() - 0.5) * 0.25,
         vy: -Math.random() * 0.15 - 0.03,
         size: Math.random() * 2 + 0.4,
@@ -53,18 +59,19 @@ export function ParticleField({ intensity = 0.3 }: { intensity?: number }) {
     function draw() {
       rafId = requestAnimationFrame(draw);
       if (!canvas || !ctx) return;
-      const { width, height } = canvas;
+      const w = window.innerWidth;
+      const h = window.innerHeight;
       const inten = intensityRef.current;
 
-      ctx.clearRect(0, 0, width, height);
+      ctx.clearRect(0, 0, w, h);
 
       for (const p of particles) {
         p.x += p.vx + (Math.random() - 0.5) * 0.06;
         p.y += p.vy * (0.5 + inten * 0.8);
 
-        if (p.y < -10) { p.y = height + 10; p.x = Math.random() * width; }
-        if (p.x < -10) p.x = width + 10;
-        if (p.x > width + 10) p.x = -10;
+        if (p.y < -10) { p.y = h + 10; p.x = Math.random() * w; }
+        if (p.x < -10) p.x = w + 10;
+        if (p.x > w + 10) p.x = -10;
 
         const target = p.baseOpacity * (0.6 + inten * 1.8);
         p.opacity += (target - p.opacity) * 0.025;
