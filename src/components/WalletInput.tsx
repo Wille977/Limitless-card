@@ -22,13 +22,22 @@ export function WalletInput({ onSubmit, loading }: WalletInputProps) {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="w-full max-w-lg flex flex-col gap-3">
+    <form
+      onSubmit={handleSubmit}
+      className="w-full max-w-lg flex flex-col gap-3 rounded-2xl p-5 bg-white/[0.02] backdrop-blur-xl border border-white/[0.05]"
+    >
       <div className="relative">
         <input
           type="text"
           value={wallet}
-          onChange={(e) => { setWallet(e.target.value); setTouched(false); }}
-          onBlur={() => { setTouched(true); setFocused(false); }}
+          onChange={(e) => {
+            setWallet(e.target.value);
+            setTouched(false);
+          }}
+          onBlur={() => {
+            setTouched(true);
+            setFocused(false);
+          }}
           onFocus={() => setFocused(true)}
           placeholder="0x…"
           spellCheck={false}
@@ -38,14 +47,17 @@ export function WalletInput({ onSubmit, loading }: WalletInputProps) {
             showError
               ? "border border-red-500/40 bg-red-500/[0.03]"
               : focused
-              ? "border border-[#dcf68d]/25 bg-white/[0.05]"
+              ? "border border-[#DCF58C]/25 bg-white/[0.05]"
               : "border border-white/[0.07] bg-white/[0.03] hover:border-white/[0.12]"
           }`}
         />
         {wallet.length > 0 && (
           <button
             type="button"
-            onClick={() => { setWallet(""); setTouched(false); }}
+            onClick={() => {
+              setWallet("");
+              setTouched(false);
+            }}
             className="absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 flex items-center justify-center rounded-full text-[#52525B] hover:text-white transition-colors text-sm leading-none"
           >
             ×
@@ -64,7 +76,7 @@ export function WalletInput({ onSubmit, loading }: WalletInputProps) {
         disabled={loading || !wallet}
         className="w-full py-[17px] text-[13px] font-bold tracking-[0.08em] uppercase transition-all duration-150 disabled:opacity-25 disabled:cursor-not-allowed active:scale-[0.98] hover:opacity-90"
         style={{
-          background: "#dcf68d",
+          background: "#DCF58C",
           color: "#080808",
           borderRadius: "10px",
         }}

@@ -3,7 +3,7 @@
 @theme inline {
   --color-background: #050505;
   --color-foreground: #E4E4E7;
-  --color-accent: #d7ee88;
+  --color-accent: #DCF58C;
   --color-muted: #A1A1AA;
   --color-subtle: #52525B;
   --color-card-bg: #0d0d0d;
@@ -15,6 +15,41 @@ body {
   background: var(--color-background);
   color: var(--color-foreground);
   font-family: var(--font-sans), Arial, Helvetica, sans-serif;
+}
+
+/* ── Card 3D animations ───────────────────────────────────────────────────── */
+
+@keyframes card-spin {
+  from { transform: rotateY(0deg); }
+  to   { transform: rotateY(360deg); }
+}
+
+.card-spin {
+  animation: card-spin 2.5s linear infinite;
+}
+
+@keyframes holo-shimmer {
+  0%   { background-position: 0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.card-holo-shimmer {
+  background-size: 200% 200%;
+  animation: holo-shimmer 4s ease-in-out infinite;
+}
+
+@keyframes screen-shake {
+  0%, 100% { transform: translate(0, 0); }
+  15%  { transform: translate(-2px, 1px); }
+  30%  { transform: translate(2px, -1px); }
+  45%  { transform: translate(-1px, 2px); }
+  60%  { transform: translate(1px, -2px); }
+  75%  { transform: translate(2px, 1px); }
+}
+
+.screen-shake {
+  animation: screen-shake 0.3s ease-out;
 }
 
 @keyframes fade-in {
