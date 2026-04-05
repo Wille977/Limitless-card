@@ -13,8 +13,18 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Limitless Trader Cards",
-  description: "Discover your trader archetype on Limitless Exchange",
+  title: "Trader Identity | Limitless",
+  description: "Discover your trader archetype on Limitless — the prediction market for everything.",
+  openGraph: {
+    title: "Trader Identity | Limitless",
+    description: "Discover your trader archetype on Limitless",
+    siteName: "Limitless",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Trader Identity | Limitless",
+    description: "Discover your trader archetype on Limitless",
+  },
 };
 
 export default function RootLayout({

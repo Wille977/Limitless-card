@@ -12,13 +12,13 @@ import type { TraderCardData } from "@/lib/types";
 type Stage = "landing" | "loading" | "revealing" | "result" | "error";
 
 const ANALYSIS_STEPS = [
-  "Pulling on-chain data",
+  "Connecting to Limitless",
+  "Scanning your positions",
   "Analysing trade history",
   "Cross-referencing markets",
   "Calculating win rate",
-  "Measuring positions",
-  "Identifying archetype",
-  "Building your card",
+  "Identifying your archetype",
+  "Generating your card",
 ];
 
 const STEP_DURATIONS = [700, 800, 900, 800, 700, 900, 600];
@@ -228,7 +228,7 @@ export default function Home() {
   function handleShareX() {
     if (!cardData) return;
     const text = encodeURIComponent(
-      `I'm ${cardData.card.title} on Limitless Exchange.\n\n"${motivation}"\n\nDiscover your trader archetype 👇`
+      `I'm "${cardData.card.title}" on @trylimitless\n\n"${motivation}"\n\nDiscover your trader archetype 👇\nlimitless.exchange/card`
     );
     window.open(`https://x.com/intent/tweet?text=${text}`, "_blank");
   }
@@ -245,6 +245,15 @@ export default function Home() {
     <div className="min-h-screen bg-[#050505] flex flex-col overflow-hidden relative">
       {/* Ambient particle field */}
       <ParticleField intensity={particleIntensity} />
+
+      {/* Subtle top vignette */}
+      <div
+        className="fixed inset-x-0 top-0 h-[300px] pointer-events-none z-0"
+        style={{
+          background:
+            "radial-gradient(ellipse 80% 100% at 50% 0%, rgba(220,245,140,0.03) 0%, transparent 70%)",
+        }}
+      />
 
       {/* Flash overlay on reveal — soft bloom */}
       <AnimatePresence>
@@ -268,6 +277,34 @@ export default function Home() {
         )}
       </AnimatePresence>
 
+      {/* ── Header ── */}
+      <header className="relative z-20 flex items-center justify-between px-6 sm:px-10 py-5">
+        <a
+          href="https://limitless.exchange"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="flex items-center gap-2.5 group"
+        >
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src="/limitless-logo.svg"
+            alt="Limitless"
+            className="w-7 h-7 rounded-[6px] opacity-80 group-hover:opacity-100 transition-opacity"
+          />
+          <span className="text-[11px] font-medium tracking-[0.18em] uppercase text-[#52525B] group-hover:text-[#A1A1AA] transition-colors">
+            Limitless
+          </span>
+        </a>
+        <a
+          href="https://limitless.exchange"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-[11px] font-mono text-[#3F3F46] hover:text-[#52525B] transition-colors"
+        >
+          limitless.exchange
+        </a>
+      </header>
+
       {/* Main content */}
       <main
         className={`relative z-10 flex-1 flex flex-col items-center px-6 sm:px-10 ${
@@ -277,20 +314,27 @@ export default function Home() {
         {/* Spacer pushes card to visual center — card never moves */}
         <div className="flex-1" />
 
-        {/* ── Title (landing only) — absolutely positioned above card ── */}
+        {/* ── Title (landing only) ── */}
         <AnimatePresence>
           {stage === "landing" && (
-            <motion.h1
-              key="title"
+            <motion.div
+              key="title-block"
               initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -6 }}
               transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
-              className="text-4xl sm:text-5xl font-bold leading-[1.1] mb-8 text-center"
-              style={{ color: "#E4E4E7", letterSpacing: "-0.025em" }}
+              className="mb-8 text-center"
             >
-              What kind of trader are you?
-            </motion.h1>
+              <p className="text-[11px] font-medium tracking-[0.25em] uppercase text-[#3F3F46] mb-3">
+                Trader Identity
+              </p>
+              <h1
+                className="text-4xl sm:text-5xl font-bold leading-[1.1]"
+                style={{ color: "#E4E4E7", letterSpacing: "-0.025em" }}
+              >
+                What kind of trader are you?
+              </h1>
+            </motion.div>
           )}
         </AnimatePresence>
 
@@ -519,10 +563,42 @@ export default function Home() {
       )}
 
       {/* Footer */}
-      <footer className="relative z-10 flex items-center justify-center px-6 py-4">
-        <span className="text-[10px] tracking-[0.22em] uppercase text-[#1e1e20]">
-          limitless.exchange
-        </span>
+      <footer className="relative z-10 px-6 sm:px-10 py-5">
+        <div className="flex items-center justify-between border-t border-white/[0.04] pt-5">
+          <a
+            href="https://limitless.exchange"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-2 text-[10px] tracking-[0.2em] uppercase text-[#27272A] hover:text-[#3F3F46] transition-colors"
+          >
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="/limitless-logo.svg"
+              alt=""
+              className="w-4 h-4 rounded-[3px] opacity-30"
+            />
+            Built on Limitless
+          </a>
+          <div className="flex items-center gap-4">
+            <a
+              href="https://limitless.exchange"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-[10px] tracking-[0.15em] uppercase text-[#27272A] hover:text-[#3F3F46] transition-colors"
+            >
+              Trade
+            </a>
+            <span className="w-px h-2.5 bg-white/[0.06]" />
+            <a
+              href="https://x.com/trylimitless"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-[10px] tracking-[0.15em] uppercase text-[#27272A] hover:text-[#3F3F46] transition-colors"
+            >
+              @trylimitless
+            </a>
+          </div>
+        </div>
       </footer>
     </div>
   );
