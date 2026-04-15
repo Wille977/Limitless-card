@@ -15,6 +15,10 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Trader Identity | Limitless",
   description: "Discover your trader archetype on Limitless — the prediction market for everything.",
+  icons: {
+    icon: "/limitless-icon.png",
+    apple: "/limitless-icon.png",
+  },
   openGraph: {
     title: "Trader Identity | Limitless",
     description: "Discover your trader archetype on Limitless",

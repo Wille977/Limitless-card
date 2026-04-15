@@ -235,7 +235,7 @@ export default function Home() {
 
   /* ── Derived state ──────────────────────────────────────────────────────── */
 
-  const showCard = stage !== "error";
+  const showCard = true;
   const particleIntensity =
     stage === "loading" || stage === "revealing" ? 0.8 : 0.3;
 
@@ -289,7 +289,7 @@ export default function Home() {
           <img
             src="/limitless-logo.svg"
             alt="Limitless"
-            className="w-7 h-7 rounded-[6px] opacity-80 group-hover:opacity-100 transition-opacity"
+            className="h-5 w-auto opacity-80 group-hover:opacity-100 transition-opacity"
           />
           <span className="text-[11px] font-medium tracking-[0.18em] uppercase text-[#52525B] group-hover:text-[#A1A1AA] transition-colors">
             Limitless
@@ -535,12 +535,18 @@ export default function Home() {
               initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0 }}
-              className="flex flex-col items-center gap-6 w-full max-w-lg"
+              className="mt-8 flex flex-col items-center gap-5 w-full max-w-lg mx-auto"
             >
               <div className="w-full bg-red-500/[0.06] border border-red-500/15 rounded-xl px-5 py-4 text-sm text-red-400 text-center">
                 {error}
               </div>
               <WalletInput onSubmit={handleSubmit} loading={false} />
+              <button
+                onClick={handleReset}
+                className="text-[11px] font-mono tracking-widest text-[#3F3F46] hover:text-[#52525B] transition-colors uppercase"
+              >
+                ← back to start
+              </button>
             </motion.div>
           )}
         </AnimatePresence>
@@ -574,7 +580,7 @@ export default function Home() {
             <img
               src="/limitless-logo.svg"
               alt=""
-              className="w-4 h-4 rounded-[3px] opacity-30"
+              className="h-3 w-auto opacity-30"
             />
             Built on Limitless
           </a>
